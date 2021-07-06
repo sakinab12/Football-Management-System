@@ -4,4 +4,4 @@ The mini world we have chosen is football tournament, and the title for our data
 Refer the report for more details on ER diagram and other aspects of database design.
 
 Usage:
-All queries are listed in the .txt files. These need to be directly run on te SQL Terminal.
+All queries are listed in the .txt file in the SQL Queries Folder. These need to be directly run on te SQL Terminal.
