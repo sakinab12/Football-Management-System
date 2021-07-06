@@ -1,0 +1,385 @@
+create table team(team_id number(2), name varchar(20), city varchar(20), home_stadium varchar(20), constraint pk_team primary key (team_id));
+create table match(match_no number(5), m_date date, result varchar(20), host number(2), guest number(2),stadium varchar(30), constraint pk_match primary key (match_no), constraint fk_match_host foreign key (host) references team(team_id) on delete cascade, constraint fk_match_guest foreign key (guest) references team(team_id) on delete cascade);
+create table manager(manager_id number(5), fname varchar(20), lname varchar(20), nationality varchar(20), type varchar(20), team_id number(2), constraint pk_manager primary key (manager_id), constraint fk_manager foreign key (team_id) references team(team_id) on delete cascade);
+create table player(player_id number(5), shirt_no number(3), fname varchar(20), lname varchar(20), position varchar(3), dob date, team_id number(2), constraint pk_player primary key (player_id), constraint fk_player foreign key (team_id) references team(team_id) on delete cascade);
+create table sponsor(name varchar(20), type varchar(20), constraint pk_sponsor primary key (name));
+create table sponsors(contract_tenure number(2), name varchar(20), team_id number(2), constraint pk_sponsors primary key(team_id, name), constraint fk_sponsors_name foreign key (name) references sponsor(name) on delete cascade, constraint fk_sponsors_team_id foreign key (team_id) references team(team_id) on delete cascade);
+create table referee(referee_id number(2), name varchar(20), type varchar(20), constraint pk_referee primary key (referee_id));
+create table substitutes(time number(2), pid_sub number(5), pid_sub_for number(5), match_no number(5), constraint pk_subs primary key(pid_sub, pid_sub_for, match_no), constraint fk_subs_match_no foreign key (match_no) references match(match_no) on delete cascade, constraint fk_subs_sub_for foreign key (pid_sub_for) references player(player_id) on delete cascade, constraint fk_subs_sub foreign key (pid_sub) references player(player_id) on delete cascade);
+create table email(email varchar(30), manager_id number(5), constraint pk_email primary key(manager_id, email), constraint fk_email foreign key (manager_id) references manager(manager_id) on delete cascade);
+create table plays( team_id number(2), match_no number(5), goals number(2), possession number(2), fouls number(2), constraint pk_plays primary key(team_id, match_no), constraint fk_plays_team_id foreign key (team_id) references team(team_id) on delete cascade, constraint fk_plays_match_no foreign key (match_no) references match(match_no) on delete cascade);
+create table referred_by(match_no number(5), referee_id number(2), constraint pk_ref_by primary key(match_no, referee_id), constraint fk_ref_by_match_no foreign key (match_no) references match(match_no) on delete cascade, constraint fk_ref_by_referee_id foreign key (referee_id) references referee(referee_id) on delete cascade);
+
+
+
+
+insert into team values(01, 'FC Barcelona', 'Barcelona', 'Camp Nou');
+insert into team values(02, 'Real Madrid', 'Madrid', 'Santiago BearNabu');
+insert into team values(03, 'Atletico De Madrid', 'Madrid', 'Wanda Metropoliotano');
+insert into team values(04, 'Sevilla FC', 'Sevilla', 'Ramon Sanchez');
+insert into team values(05, 'Valencia CF', 'Valencia', 'Mestalla Stadium');
+
+
+insert into match values(1, '10-Aug-2019', 'FC Barcelona', 01,02, 'Camp Nou');
+insert into match values(2, '11-Aug-2019', 'Atletico De Madrid', 02,03,'Santiago BearNabu');
+insert into match values(3, '12-Aug-2019', 'FC Barcelona', 03,04,'Wanda Metropoliotano');
+insert into match values(4, '13-Aug-2019', 'Drawn', 04,05,'Ramon Sanchez');
+insert into match values(5, '14-Aug-2019', 'Drawn', 05,01, 'Mestalla Stadium');
+insert into match values(6, '18-Aug-2019', 'Drawn', 01,04, 'Camp Nou');
+insert into match values(7, '19-Aug-2019', 'Real Madrid', 02,05, 'Santiago BearNabu');
+insert into match values(8, '19-Aug-2019', 'Valencia', 03,01, 'Wanda Metropoliotano');
+insert into match values(9, '20-Aug-2019', 'FC Barcelona', 04,02, 'Ramon Sanchez');
+insert into match values(10, '22-Aug-2019', 'Drawn', 05,03, 'Mestalla Stadium');
+
+
+insert into manager values(00001, 'Ernesto', 'Valverde', 'Spain', 'Sr. Assistant',01);
+insert into manager values(00006, 'Jeff', 'Socrades', 'Spain', 'Jr. Assistant',01);
+insert into manager values(00002, 'Zinedine', 'Zidane', 'France', 'Jr. Assistant',02);
+insert into manager values(00003, 'Diego', 'Simeone', 'Argentina', 'Sr. Assistant',03);
+insert into manager values(00004, 'Julen', 'Lopetegui', 'Spain', 'Jr. Assistant',04);
+insert into manager values(00005, 'Albert', 'Celades', 'Spain', 'Sr. Assistant',05);
+insert into manager values(00009, 'Zin', 'Zag', 'France', 'Sr. Assistant',02);
+
+
+insert into player values(00011, 001, 'Lionel', 'Messi', 'RWF', '24-Jun-1987', 01);
+insert into player values(00012, 002, 'Luis', 'Saurez', 'CF', '24-Jan-1987', 01);
+insert into player values(00013, 003, 'Antoine', 'Griezman', 'SS', '21-Mar-1991', 01);
+insert into player values(00014, 004, 'Sergio', 'Busquets', 'DMF', '16-Jul-1988', 01);
+insert into player values(00015, 005, 'Gerrard', 'Pique', 'CB', '02-Feb-1987', 01);
+
+insert into player values(00021, 011, 'Eden', 'Hazard', 'LWF', '07-Jan-1991', 02);
+insert into player values(00022, 021, 'Gareth', 'Bale', 'RWF', '16-Jul-1989', 02);
+insert into player values(00023, 031, 'Sergio', 'Ramos', 'CB', '30-Mar-1986', 02);
+insert into player values(00024, 041, 'Karim', 'Benzema', 'CF', '19-Dec-1987', 02);
+insert into player values(00025, 051, 'Luka', 'Modric', 'CMF', '09-sep-1985', 02);
+
+insert into player values(00031, 061, 'Diego', 'Costa', 'CF', '07-Oct-1988', 03);
+insert into player values(00032, 071, 'Alvaro', 'Morata', 'CF', '23-Oct-1992', 03);
+insert into player values(00033, 081, 'Jorge', 'Koke', 'CMF', '08-Jan-1992', 03);
+insert into player values(00034, 091, 'Saul', 'Niguez', 'CMF', '21-Nov-1994', 03);
+insert into player values(00035, 092, 'Thomas', 'Lemar', 'LWF', '12-Nov-1995', 03);
+
+insert into player values(00041, 044, 'Jesus', 'Navas', 'RM', '21-Nov-1985', 04);
+insert into player values(00042, 045, 'Ever', 'Banega', 'CMF', '29-Jun-1988', 04);
+insert into player values(00043, 046, 'Lunk', 'De Jong', 'CF', '27-Aug-1990', 04);
+insert into player values(00044, 047, 'Javier', 'Hernandez', 'CF', '01-Jun-1988', 04);
+insert into player values(00045, 048, 'Munir', 'E1 Haddadi', 'CF', '01-Sep-1995', 04);
+
+insert into player values(00051, 101, 'Daniel', 'Parejo', 'CMF', '16-Apr-1989', 05);
+insert into player values(00052, 201, 'Goncalo', 'Guedes', 'SS', '29-Nov-1996', 05);
+insert into player values(00053, 301, 'Jose', 'Gaya', 'CF', '25-May-1995', 05);
+insert into player values(00054, 401, 'Jasper', 'Cilleson', 'GK', '22-Apr-1989', 05);
+insert into player values(00055, 501, 'Kevin', 'Gameiro', 'CF', '22-Apr-1989', 05);
+
+
+insert into sponsor values('Nike', 'Kit');
+insert into sponsor values('Adidas', 'Kit');
+insert into sponsor values('Puma', 'Kit');
+insert into sponsor values('Rakuten', 'Jersey Sponsor');
+insert into sponsor values('Beko', 'Training Partner');
+insert into sponsor values('Konami', 'Gaming Partner');
+insert into sponsor values('Emirates', 'Jersey Partner');
+insert into sponsor values('Plus500', 'Jersey Sponsor');
+insert into sponsor values('EA Sports', 'Gaming Partner');
+insert into sponsor values('Coca Cola', 'Beverage Partner');
+insert into sponsor values('Bwin', 'Jersey Sponsor');
+
+
+insert into sponsors values(06, 'Nike', 01);
+insert into sponsors values(04, 'Adidas', 02);
+insert into sponsors values(04, 'Nike', 03);
+insert into sponsors values(05, 'Nike', 04);
+insert into sponsors values(02, 'Puma', 05);
+insert into sponsors values(05, 'Rakuten', 01);
+insert into sponsors values(05, 'Beko', 01);
+insert into sponsors values(03, 'Konami', 01);
+insert into sponsors values(05, 'Emirates', 02);
+insert into sponsors values(04, 'Plus500', 03);
+insert into sponsors values(03, 'EA Sports', 02);
+insert into sponsors values(02, 'EA Sports', 01);
+insert into sponsors values(04, 'Coca Cola', 04);
+insert into sponsors values(05, 'Bwin', 05);
+
+
+insert into referee values(1, 'Antonio Lahoz', 'Main Referee');
+insert into referee values(2, 'Jesus Manzano', 'Sideline Referee');
+insert into referee values(3, 'Juan Martinez', 'Sideline Referee');
+insert into referee values(4, 'Xavier Fernando', 'Main Referee');
+insert into referee values(5, 'Carlos Grande', 'Sideline Referee');
+insert into referee values(6, 'Jose Sanchez', 'Sideline Referee');
+insert into referee values(7, 'Eduardo Iglesias', 'Main Referee');
+insert into referee values(8, 'Richardo Burgos', 'Sideline Referee');
+insert into referee values(9, 'Valentin Gomez', 'Sideline Referee');
+insert into referee values(10, 'Antonio Lahoz', 'Main Referee');
+
+
+insert into substitutes values(60,00012,00013,1);
+insert into substitutes values(64,00024,00021,1);
+insert into substitutes values(55,00022,00021,2);
+insert into substitutes values(65,00035,00033,2);
+insert into substitutes values(68,00024,00025,2);
+insert into substitutes values(70,00041,00042,3);
+insert into substitutes values(56,00031,00033,3);
+insert into substitutes values(62,00044,00045,4);
+insert into substitutes values(60,00051,00052,4);
+insert into substitutes values(63,00012,00011,5);
+insert into substitutes values(61,00055,00054,5);
+insert into substitutes values(72,00013,00011,6);
+insert into substitutes values(58,00043,00045,6);
+insert into substitutes values(68,00024,00023,7);
+insert into substitutes values(60,00055,00054,7);
+insert into substitutes values(70,00033,00035,8);
+insert into substitutes values(72,00015,00011,8);
+insert into substitutes values(65,00025,00024,9);
+insert into substitutes values(71,00023,00022,9);
+insert into substitutes values(70,00035,00031,10);
+insert into substitutes values(66,00053,00052,10);
+
+
+insert into email values('valverde1@fcb.com',1);
+insert into email values('ernestov@gmail.com',1);
+insert into email values('zzidane@realmadrid.com',2);
+insert into email values('zizou@gmail.com',2);
+insert into email values('simeone@atm.com',3);
+insert into email values('diego7@yahoo.com',3);
+insert into email values('lopetegui@sevillafc.com',4);
+insert into email values('julian@gmail.com',4);
+insert into email values('a_celades@valenciacf.com',5);
+insert into email values('albert_c@rediffmail.com',5);
+
+insert into plays values(01, 1,3,58,5);
+insert into plays values(02, 1,2,42,7);
+insert into plays values(02, 2,0,46,4);
+insert into plays values(03, 2,2,54,3);
+insert into plays values(03, 3,2,40,5);
+insert into plays values(04, 3,3,60,4);
+insert into plays values(04, 4,2,52,3);
+insert into plays values(05, 4,2,48,2);
+insert into plays values(01, 5,0,45,5);
+insert into plays values(05, 5,0,55,6);
+insert into plays values(01, 6,1,44,3);
+insert into plays values(04, 6,1,56,2);
+insert into plays values(02, 7,4,70,2);
+insert into plays values(05, 7,2,30,4);
+insert into plays values(03, 8,2,49,5);
+insert into plays values(01, 8,3,51,4);
+insert into plays values(04, 9,0,35,5);
+insert into plays values(02, 9,4,65,4);
+insert into plays values(05, 10,1,50,2);
+insert into plays values(03, 10,1,50,4);
+
+
+
+insert into referred_by values(1,01);
+insert into referred_by values(1,02);
+insert into referred_by values(1,03);
+insert into referred_by values(2,04);
+insert into referred_by values(2,05);
+insert into referred_by values(2,06);
+insert into referred_by values(3,07);
+insert into referred_by values(3,08);
+insert into referred_by values(3,09);
+insert into referred_by values(4,10);
+insert into referred_by values(4,02);
+insert into referred_by values(4,03);
+insert into referred_by values(5,04);
+insert into referred_by values(5,05);
+insert into referred_by values(5,06);
+insert into referred_by values(6,07);
+insert into referred_by values(6,08);
+insert into referred_by values(6,09);
+insert into referred_by values(7,01);
+insert into referred_by values(7,03);
+insert into referred_by values(7,02);
+insert into referred_by values(8,07);
+insert into referred_by values(8,09);
+insert into referred_by values(8,05);
+insert into referred_by values(9,10);
+insert into referred_by values(9,05);
+insert into referred_by values(9,08);
+insert into referred_by values(10,04);
+insert into referred_by values(10,06);
+insert into referred_by values(10,08);
+
+SELECT QUERIES
+
+//q1//
+select * from match where match_no in (select match_no from substitutes group by match_no having count(*)=(select max(count(*)) from substitutes group by match_no));
+
+//q2//
+select * from manager where team_id in (select team_id from sponsors where name='Nike');
+
+//q3//
+select fname, lname from player where team_id in (select host from match where match_no=01 union select guest from match where match_no=01);
+
+//q4//
+select * from team where name in (select result from match m,referred_by rb,referee r where m.match_no=rb.match_no and rb.referee_id=r.referee_id and r.name='Antonio Lahoz');
+
+//q5//
+select * from referee where referee_id in(select referee_id from referred_by group by referee_id having count(*) = (select max(count(*)) from referred_by where match_no in (select match_no from plays where team_id=&tid) group by referee_id));
+
+//q6//
+select * from team where team_id in (select team_id from manager group by team_id having count(*)=&no);
+
+//q7//
+select * from manager where team_id in (select team_id from team where name = '&n' and home_stadium = '&hs');
+
+//q8//
+select * from player where player_id = (select pid_sub from substitutes group by pid_sub having count(*)=(select max(count(*)) from substitutes group by pid_sub));
+
+
+
+UPDATE QUERIES
+
+//q1//
+update sponsors set contract_tenure=contract_tenure + 1 where name='Adidas';
+
+//q2//
+update player set team_id = (select team_id from team where name = 'FC Barcelona') where fname ='Eden' and lname='Hazard';
+
+//q3//
+update player set shirt_no = &no where player_id=&id;
+
+//q4//
+update player set position =&pos where player_id in (select pid_sub from substitutes where match_no in (select match_no from substitutes group by match_no having count(*)=1));
+
+DELETE QUERIES
+
+//q1//
+alter table substitutes drop constraint fk_subs_for;
+alter table substitutes drop constraint fk_subs_sub;
+alter table substitutes add constraint fk_subs_sub_for foreign key (pid_sub_for) references player(player_id) on delete cascade;
+alter table substitutes add constraint fk_subs_sub foreign key (pid_sub) references player(player_id) on delete cascade;
+delete from player where team_id = (select team_id from team where name = 'Real Madrid') and shirt_no=021;
+
+//q2//
+delete from manager where team_id = (select team_id from team where name = 'FC Barcelona') and type = 'Jr. Assistant';
+
+//q3//
+delete from manager where manager_id = (select manager_id from manager m join team t on m.team_id = t.team_id  where t.home_stadium = '&hs');
+
+//q4//
+delete from player where team_id in (select team_id from team t join match m on t.team_id = m.host where m.m_date = '&dt' and t.home_stadium = '&hs');
+
+
+
+PL/SQL
+Procedures
+
+//q1//
+
+create or replace procedure home_perf(std_name in varchar2) is
+cursor match_crs is (select * from match where host=(
+select team_id from team where home_stadium=std_name));
+ht_name team.name%type;
+drawn number := 0;
+won number := 0;
+lost number := 0;
+BEGIN
+select name into ht_name from team where home_stadium=std_name;
+FOR match_row in match_crs LOOP
+IF match_row.result='Drawn' THEN
+drawn := drawn + 1;
+ELSIF match_row.result=ht_name THEN
+won := won + 1;
+ELSE
+lost := lost + 1;
+END IF;
+END LOOP;
+dbms_output.put_line('Team ' || ht_name || ' has won ' || won ||
+' matches, lost ' || lost || ' matches and drawn ' || drawn ||
+' matches at home stadium');
+END;
+
+show error
+set serveroutput on
+exec home_perf('Camp Nou');
+
+//q2//
+
+create or replace procedure goal_diff(tno number) is
+
+cursor crs is (select * from plays where match_no in (select match_no from plays where team_id=tno));
+
+goal_sc number(2) := 0;
+goal_cc number(2) := 0;
+goal_diff number(2) := 0;
+
+BEGIN
+
+FOR row in crs LOOP
+
+IF row.team_id=tno THEN
+goal_sc := goal_sc + row.goals;
+
+ELSE
+goal_cc := goal_cc + row.goals;
+
+END IF;
+END LOOP;
+
+goal_diff := goal_sc - goal_cc;
+
+dbms_output.put_line('Goal difference of the team ' || tno || ' is ' || goal_diff);
+
+END;
+
+Functions
+
+//q1//
+
+create or replace function avg_age_team(tno in number) return number is
+cursor player_crs is (select * from player where team_id=tno);
+yrs number(2);
+sum_yrs number(3) := 0;
+count_pl number(2) := 0;
+BEGIN
+FOR player in player_crs LOOP
+yrs := trunc(months_between(sysdate, player.dob)/12);
+sum_yrs := sum_yrs + yrs;
+count_pl := count_pl + 1;
+END LOOP;
+return trunc(sum_yrs/count_pl);
+END;
+
+variable avg_age number;
+exec :avg_age := avg_age_team(03);
+
+print avg_age;
+
+//q2//
+
+create or replace function calc_points(team_no number) return number is
+cursor match_crs is (select * from match where host=team_no union select * from match where guest=team_no);
+win_tno team.team_id%type;
+points number(2) := 0;
+BEGIN
+FOR match_row in match_crs LOOP
+IF match_row.result='Drawn' THEN
+points := points + 1;
+ELSE
+select team_id into win_tno from team where name=match_row.result;
+IF win_tno = team_no THEN
+points := points + 3;
+END IF;
+END IF;
+END LOOP;
+return points;
+END;
+
+variable pts number;
+exec :pts := calc_points(02);
+
+print pts;
+
+
+
+
+
+
+
+
+
+
+
+
